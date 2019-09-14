@@ -1,3 +1,11 @@
+* create via `create-react-app`
+* install stream-react lib
+* install vigil stuff
+* register for stream
+** enable stream chat trial
+
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
