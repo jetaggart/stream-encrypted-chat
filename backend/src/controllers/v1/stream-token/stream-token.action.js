@@ -23,7 +23,7 @@ exports.streamToken = async (req, res) => {
         const client = new StreamChat(apiKey, apiSecret);
 
         const user = Object.assign({}, data, {
-            id: req.user.identity,
+            id: `${req.user.identity}`,
             role: 'admin',
             image: `https://robohash.org/${req.user.identity}`,
         });
