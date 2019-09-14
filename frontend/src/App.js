@@ -2,9 +2,10 @@ import React from 'react';
 import {Channel, ChannelHeader, Chat, MessageInput, MessageList, Thread, Window} from 'stream-chat-react';
 import {StreamChat} from 'stream-chat';
 import {MessageEncrypted} from './MessageEncrypted';
+import {EThree} from '@virgilsecurity/e3kit';
 
 import 'stream-chat-react/dist/css/index.css';
-
+import {MessageInputEncrypted} from "./MessageInputEncrypted";
 
 class App extends React.Component {
   constructor(props) {
@@ -17,6 +18,7 @@ class App extends React.Component {
     this.handleStream = this.handleStream.bind(this);
     this.handleVirgil = this.handleVirgil.bind(this);
     this.handleAuthenticate = this.handleAuthenticate.bind(this);
+    this.buildMessageEncrypted = this.buildMessageEncrypted.bind(this);
   }
 
   handleChange(event) {
@@ -57,9 +59,22 @@ class App extends React.Component {
     });
   }
 
-  handleVirgil(response) {
+  async handleVirgil(response) {
+    const eThree = await EThree.initialize(() => response.token);
+    try {
+      await eThree.register();
+    } catch {
+      // already registered;
+    }
+
+    // const usersToEncryptTo = [this.state.chatWith];
+    // const publicKeys = await eThree.lookupPublicKeys(usersToEncryptTo);
+
     this.setState({
-      virgil: response
+      virgil: {
+        ...response,
+        // publicKeys
+      }
     });
   }
 
@@ -104,16 +119,25 @@ class App extends React.Component {
       .then(this.handleAuthenticate);
   }
 
+  buildMessageEncrypted(props) {
+    const newProps = {
+      ...props,
+      virgil: this.state.virgil,
+      chatWith: this.state.chatWith,
+    };
+    return <MessageEncrypted {...newProps}/>
+  }
+
   render() {
-    if (this.state.stream) {
-      console.error(this.state.stream);
+    if (this.state.stream && this.state.virgil) {
+      console.error(this.state.virgil);
       return (
         <Chat client={this.state.stream.client} theme={'messaging light'}>
           <Channel channel={this.state.stream.channel}>
             <Window>
               <ChannelHeader/>
-              <MessageList Message={MessageEncrypted}/>
-              <MessageInput/>
+              <MessageList Message={this.buildMessageEncrypted}/>
+              <MessageInputEncrypted channel={this.state.stream.channel}/>
             </Window>
             <Thread/>
           </Channel>
