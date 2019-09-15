@@ -45,7 +45,7 @@ class App extends React.Component {
     members.sort();
 
     const channel = chatClient.channel('messaging', members.join("-"), {
-      image: 'https://cdn.chrisshort.net/testing-certificate-chains-in-go/GOPHER_MIC_DROP.png',
+      image: `https://getstream.io/random_svg/?id=rapid-recipe-0&name=${members.join("+")}`,
       name: members.join(", "),
       members: members,
     });
