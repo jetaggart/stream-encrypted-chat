@@ -12,14 +12,19 @@ export class MessageEncrypted extends PureComponent {
   };
 
   decryptText = async (props) => {
-    // const publicKey = await this.props.eThree.lookupPublicKeys(this.props.chatWith);
-    // const decryptedText = await this.props.eThree.decrypt(props.message.text, publicKey);
-    // this.setState({
-    //   decryptedText
-    // });
-    this.setState({
-      decryptedText: props.message.text
-    })
+    if (props.isMyMessage(props.message)) {
+      const publicKey = await this.props.virgil.eThree.lookupPublicKeys(this.props.identity);
+      const decryptedText = await this.props.virgil.eThree.decrypt(props.message.text, publicKey);
+      this.setState({
+        decryptedText
+      });
+    } else {
+      const publicKey = await this.props.virgil.eThree.lookupPublicKeys(this.props.chatWith);
+      const decryptedText = await this.props.virgil.eThree.decrypt(props.message.text, publicKey);
+      this.setState({
+        decryptedText
+      });
+    }
   };
 
   render() {

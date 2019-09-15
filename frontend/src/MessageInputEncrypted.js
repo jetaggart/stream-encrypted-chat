@@ -3,21 +3,19 @@ import {MessageInput} from "stream-chat-react";
 
 export class MessageInputEncrypted extends PureComponent {
   constructor(props) {
-    console.error(props);
     super(props);
   }
 
   encryptText = async (data) => {
-    console.error("sending message", data);
+    const encryptedText = await this.props.virgil.eThree.encrypt(data.text, this.props.virgil.publicKeys);
     const encryptedData = {
       ...data,
-      text: "intercepted 123"
+      text: encryptedText
     };
     await this.props.channel.sendMessage(encryptedData);
   };
 
   render() {
-    console.error(this.props);
     const newProps = {
       ...this.props,
       sendMessage: this.encryptText

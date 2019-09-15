@@ -67,13 +67,14 @@ class App extends React.Component {
       // already registered;
     }
 
-    // const usersToEncryptTo = [this.state.chatWith];
-    // const publicKeys = await eThree.lookupPublicKeys(usersToEncryptTo);
+    const usersToEncryptTo = [this.state.chatWith];
+    const publicKeys = await eThree.lookupPublicKeys(usersToEncryptTo);
 
     this.setState({
       virgil: {
         ...response,
-        // publicKeys
+        eThree,
+        publicKeys
       }
     });
   }
@@ -123,6 +124,7 @@ class App extends React.Component {
     const newProps = {
       ...props,
       virgil: this.state.virgil,
+      identity: this.state.identity,
       chatWith: this.state.chatWith,
     };
     return <MessageEncrypted {...newProps}/>
@@ -130,14 +132,13 @@ class App extends React.Component {
 
   render() {
     if (this.state.stream && this.state.virgil) {
-      console.error(this.state.virgil);
       return (
         <Chat client={this.state.stream.client} theme={'messaging light'}>
           <Channel channel={this.state.stream.channel}>
             <Window>
               <ChannelHeader/>
               <MessageList Message={this.buildMessageEncrypted}/>
-              <MessageInputEncrypted channel={this.state.stream.channel}/>
+              <MessageInputEncrypted virgil={this.state.virgil} channel={this.state.stream.channel}/>
             </Window>
             <Thread/>
           </Channel>
