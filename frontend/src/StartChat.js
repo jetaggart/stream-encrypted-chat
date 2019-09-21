@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { StreamChat } from 'stream-chat';
-import { EThree } from '@virgilsecurity/e3kit';
+import { EThree, LookupError } from '@virgilsecurity/e3kit';
 import { post } from './Http'
 
 export class StartChat extends PureComponent {
@@ -46,7 +46,11 @@ export class StartChat extends PureComponent {
         stream:   { ...this.state.stream, channel }
       });
     } catch (err) {
-      this.setState({ error: err.message });
+      if (err instanceof LookupError) {
+        this.setState({ error: 'Other user is not registered. Open another window and register that user.' })
+      } else {
+        this.setState({ error: err.message });
+      }
     }
   };
 
@@ -69,13 +73,7 @@ export class StartChat extends PureComponent {
       // already registered
     }
 
-    try {
-      return { ...response, eThree, };
-    } catch {
-      return {
-        error: 'Other user is not registered. Open another window and register that identity. Refresh browser to start over.'
-      };
-    }
+    return { ...response, eThree, };
   };
 
   _connect = async (authToken) => {
@@ -89,16 +87,6 @@ export class StartChat extends PureComponent {
   };
 
   render() {
-    if (this.state.error !== '') {
-      return (
-        <div className="container">
-          <div className="card">
-            {this.state.error}
-          </div>
-        </div>
-      )
-    }
-
     let form;
     if (this.state.virgil && this.state.stream) {
       form = {
@@ -128,6 +116,9 @@ export class StartChat extends PureComponent {
           <input id="identity" type="text" name={form.field} value={this.state[form.field]}
                  onChange={form.handleFieldChange}/>
           <input type="submit" value={form.submitLabel}/>
+          <div className="error">
+            {this.state.error}
+          </div>
         </form>
       </div>
     )

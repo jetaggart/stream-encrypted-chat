@@ -49,6 +49,7 @@ code {
 
 .container [type=submit] {
     position: relative;
+    margin-bottom: 12px;
     vertical-align: top;
     width: 100%;
     height: 60px;
@@ -63,6 +64,10 @@ code {
     cursor: pointer;
     -webkit-box-shadow: inset 0 -2px #263849;
     box-shadow: inset 0 -2px #263849;
+}
+
+.container .error {
+    color: red;
 }
 
 .container [type=submit]:active {
