@@ -22,7 +22,7 @@ class App extends React.Component {
     this.setState({ chatWith: event.target.value });
   };
 
-  _handleStream = (response) => {
+  _connectStream = (response) => {
     const chatClient = new StreamChat(response.apiKey);
 
     chatClient.setUser(
@@ -52,7 +52,7 @@ class App extends React.Component {
     });
   };
 
-  _handleVirgil = async (response) => {
+  _connectVirgil = async (response) => {
     const eThree = await EThree.initialize(() => response.token);
     try {
       await eThree.register();
@@ -60,8 +60,7 @@ class App extends React.Component {
       // already registered;
     }
 
-    const usersToEncryptTo = [this.state.chatWith];
-    const publicKeys = await eThree.lookupPublicKeys(usersToEncryptTo);
+    const publicKeys =  await eThree.lookupPublicKeys([this.state.identity, this.state.chatWith]);
 
     this.setState({
       virgil: {
@@ -74,10 +73,10 @@ class App extends React.Component {
 
   _connect = (authToken) => {
     post("http://localhost:8080/v1/stream-token", {}, authToken)
-      .then(this._handleStream);
+      .then(this._connectStream);
 
     post("http://localhost:8080/v1/virgil-token", {}, authToken)
-      .then(this._handleVirgil);
+      .then(this._connectVirgil);
   };
 
   _handleSubmit = (event) => {

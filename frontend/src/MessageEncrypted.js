@@ -2,50 +2,44 @@ import React, { PureComponent } from 'react';
 import { MessageSimple, } from "stream-chat-react";
 
 export class MessageEncrypted extends PureComponent {
+  _isMounted = false;
+
   constructor(props) {
     super(props);
     this.state = {};
   }
 
   componentDidMount = () => {
-    this.decryptText(this.props);
+    this._isMounted = true;
+    this._decryptText()
+      .then(
+        (decryptedText) => {
+          if (this._isMounted) {
+            this.setState({ decryptedText });
+          }
+        }
+      );
   };
 
-  decryptText = async (props) => {
-    if (props.isMyMessage(props.message)) {
-      const publicKey = await this.props.virgil.eThree.lookupPublicKeys(this.props.identity);
-      const decryptedText = await this.props.virgil.eThree.decrypt(props.message.text, publicKey);
-      this.setState({
-        decryptedText
-      });
-    } else {
-      const publicKey = await this.props.virgil.eThree.lookupPublicKeys(this.props.chatWith);
-      const decryptedText = await this.props.virgil.eThree.decrypt(props.message.text, publicKey);
-      this.setState({
-        decryptedText
-      });
-    }
+  componentWillUnmount = () => {
+    this._isMounted = false;
   };
 
-  render() {
-    if (this.state.decryptedText) {
-      const newProps = {
-        ...this.props,
-        message: {
-          ...this.props.message,
-          text: this.state.decryptedText
-        }
-      };
-      return <MessageSimple {...newProps} />
-    } else {
-      const newProps = {
-        ...this.props,
-        message: {
-          ...this.props.message,
-          text: "Loading..."
-        }
-      };
-      return <MessageSimple {...newProps} />
-    }
+  _decryptText = async () => {
+    const messageIdentity = this.props.isMyMessage(this.props.message) ? this.props.identity : this.props.chatWith;
+    return this.props.virgil.eThree
+      .decrypt(this.props.message.text, this.props.virgil.publicKeys[messageIdentity]);
+  };
+
+  render = () => {
+    const newProps = {
+      ...this.props,
+      message: {
+        ...this.props.message,
+        text: this.state.decryptedText || ""
+      }
+    };
+
+    return <MessageSimple {...newProps} />
   }
 }
