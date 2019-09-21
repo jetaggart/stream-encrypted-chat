@@ -91,8 +91,8 @@ export class StartChat extends PureComponent {
     if (this.state.virgil && this.state.stream) {
       form = {
         field:             'chatWith',
-        title:             'Chat with',
-        subtitle:          'Registered as "' + this.state.identity + '". Open another window to register another identity.',
+        title:             'Who do you want to chat with?',
+        subtitle:          'Registered as "' + this.state.identity + '". Open this app in another window to register another user, or type a previously registered username below to start a chat.',
         submitLabel:       'Start Chat',
         submit:            this._handleStartChat,
         handleFieldChange: this._handleChatWithChange
@@ -101,7 +101,7 @@ export class StartChat extends PureComponent {
       form = {
         field:             'identity',
         title:             'Who are you?',
-        subtitle:          '',
+        subtitle:          'Enter a username.',
         submitLabel:       'Register',
         submit:            this._handleRegister,
         handleFieldChange: this._handleIdentityChange
