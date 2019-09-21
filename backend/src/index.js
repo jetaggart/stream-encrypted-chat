@@ -1,6 +1,4 @@
 import dotenv from 'dotenv';
-dotenv.config();
-
 import fs from 'fs';
 import path from 'path';
 import express from 'express';
@@ -8,6 +6,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
+
+dotenv.config();
 
 const api = express();
 

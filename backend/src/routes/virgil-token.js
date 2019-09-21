@@ -4,5 +4,5 @@ import { requireAuthHeader } from "../controllers/v1/authenticate/authenticate.a
 import { wrapAsync } from "../utils/controllers";
 
 module.exports = api => {
-	api.route("/v1/virgil-token").get(requireAuthHeader, wrapAsync(virgilToken));
+	api.route("/v1/virgil-token").post(requireAuthHeader, wrapAsync(virgilToken));
 };

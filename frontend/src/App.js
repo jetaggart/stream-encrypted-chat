@@ -1,41 +1,34 @@
 import React from 'react';
-import {Channel, ChannelHeader, Chat, MessageInput, MessageList, Thread, Window} from 'stream-chat-react';
-import {StreamChat} from 'stream-chat';
-import {MessageEncrypted} from './MessageEncrypted';
-import {EThree} from '@virgilsecurity/e3kit';
+import { Channel, ChannelHeader, Chat, MessageList, Thread, Window } from 'stream-chat-react';
+import { StreamChat } from 'stream-chat';
+import { MessageEncrypted } from './MessageEncrypted';
+import { EThree } from '@virgilsecurity/e3kit';
+import { post } from './Http'
 
 import 'stream-chat-react/dist/css/index.css';
-import {MessageInputEncrypted} from "./MessageInputEncrypted";
+import { MessageInputEncrypted } from "./MessageInputEncrypted";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {identity: '', chatWith: ''};
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleChatWithChange = this.handleChatWithChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleStream = this.handleStream.bind(this);
-    this.handleVirgil = this.handleVirgil.bind(this);
-    this.handleAuthenticate = this.handleAuthenticate.bind(this);
-    this.buildMessageEncrypted = this.buildMessageEncrypted.bind(this);
+    this.state = { identity: '', chatWith: '' };
   }
 
-  handleChange(event) {
-    this.setState({identity: event.target.value});
-  }
+  _handleIdentityChange = (event) => {
+    this.setState({ identity: event.target.value });
+  };
 
-  handleChatWithChange(event) {
-    this.setState({chatWith: event.target.value});
-  }
+  _handleChatWithChange = (event) => {
+    this.setState({ chatWith: event.target.value });
+  };
 
-  handleStream(response) {
+  _handleStream = (response) => {
     const chatClient = new StreamChat(response.apiKey);
 
     chatClient.setUser(
       {
-        id: response.user.id,
-        name: response.user.name,
+        id:    response.user.id,
+        name:  response.user.name,
         image: response.user.image
       },
       response.token
@@ -44,22 +37,22 @@ class App extends React.Component {
     let members = [this.state.identity, this.state.chatWith];
     members.sort();
 
-    const channel = chatClient.channel('messaging', members.join("-"), {
-      image: `https://getstream.io/random_svg/?id=rapid-recipe-0&name=${members.join("+")}`,
-      name: members.join(", "),
+    const channel = chatClient.channel('messaging', {
+      image:   `https://getstream.io/random_svg/?id=rapid-recipe-0&name=${members.join("+")}`,
+      name:    members.join(", "),
       members: members,
     });
 
     this.setState({
       stream: {
         ...response,
-        client: chatClient,
+        client:  chatClient,
         channel: channel
       }
     });
-  }
+  };
 
-  async handleVirgil(response) {
+  _handleVirgil = async (response) => {
     const eThree = await EThree.initialize(() => response.token);
     try {
       await eThree.register();
@@ -77,67 +70,41 @@ class App extends React.Component {
         publicKeys
       }
     });
-  }
+  };
 
-  handleAuthenticate(response) {
-    fetch("http://localhost:8080/v1/stream-token", {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + response.authToken
-      },
-      body: JSON.stringify({})
-    })
-      .then(res => res.json())
-      .then(this.handleStream);
+  _connect = (authToken) => {
+    post("http://localhost:8080/v1/stream-token", {}, authToken)
+      .then(this._handleStream);
 
-    fetch("http://localhost:8080/v1/virgil-token", {
-      method: "GET",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + response.authToken
-      },
-    })
-      .then(res => res.json())
-      .then(this.handleVirgil);
-  }
+    post("http://localhost:8080/v1/virgil-token", {}, authToken)
+      .then(this._handleVirgil);
+  };
 
-  handleSubmit(event) {
+  _handleSubmit = (event) => {
     event.preventDefault();
-    fetch("http://localhost:8080/v1/authenticate", {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        identity: this.state.identity,
-      })
-    })
-      .then(res => res.json())
-      .then(this.handleAuthenticate);
-  }
+    post("http://localhost:8080/v1/authenticate", { identity: this.state.identity })
+      .then(res => res.authToken)
+      .then(this._connect);
+  };
 
-  buildMessageEncrypted(props) {
+  _buildMessageEncrypted = (props) => {
     const newProps = {
       ...props,
-      virgil: this.state.virgil,
+      virgil:   this.state.virgil,
       identity: this.state.identity,
       chatWith: this.state.chatWith,
     };
     return <MessageEncrypted {...newProps}/>
-  }
+  };
 
-  render() {
+  render = () => {
     if (this.state.stream && this.state.virgil) {
       return (
         <Chat client={this.state.stream.client} theme={'messaging light'}>
           <Channel channel={this.state.stream.channel}>
             <Window>
               <ChannelHeader/>
-              <MessageList Message={this.buildMessageEncrypted}/>
+              <MessageList Message={this._buildMessageEncrypted}/>
               <MessageInputEncrypted virgil={this.state.virgil} channel={this.state.stream.channel}/>
             </Window>
             <Thread/>
@@ -146,14 +113,14 @@ class App extends React.Component {
       )
     } else {
       return (
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={this._handleSubmit}>
           <label>
             Who are you?
-            <input type="text" name="identity" value={this.state.identity} onChange={this.handleChange}/>
+            <input type="text" name="identity" value={this.state.identity} onChange={this._handleIdentityChange}/>
           </label>
           <label>
             Who do you want to chat with?
-            <input type="text" name="chatWith" value={this.state.chatWith} onChange={this.handleChatWithChange}/>
+            <input type="text" name="chatWith" value={this.state.chatWith} onChange={this._handleChatWithChange}/>
           </label>
           <input type="submit" value="Submit"/>
         </form>

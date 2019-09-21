@@ -4,6 +4,9 @@
 * register for stream
 ** enable stream chat trial
 
+- [] cleanup code
+- [] cleanup signup/chat with flow
+- [] remove features that are not supported
 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

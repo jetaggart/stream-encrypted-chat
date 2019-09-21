@@ -1,11 +1,7 @@
-import React, {PureComponent} from 'react';
-import {MessageInput} from "stream-chat-react";
+import React, { PureComponent } from 'react';
+import { MessageInput } from "stream-chat-react";
 
 export class MessageInputEncrypted extends PureComponent {
-  constructor(props) {
-    super(props);
-  }
-
   encryptText = async (data) => {
     const encryptedText = await this.props.virgil.eThree.encrypt(data.text, this.props.virgil.publicKeys);
     const encryptedData = {

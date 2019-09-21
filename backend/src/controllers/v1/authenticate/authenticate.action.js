@@ -23,7 +23,7 @@ exports.requireAuthHeader = (req, res, next) => {
 
 	if (!pseudoVerifyToken(userToken)) res.status(401).send('Unauthorized');
 
-	req.user = {identity: pseudoDecodeToken(userToken)};
+	req.user = { identity: pseudoDecodeToken(userToken) };
 	next();
 };
 
@@ -37,5 +37,5 @@ exports.authenticate = async (req, res) => {
 
 	pseudoEncodeToken(req.body.identity, token);
 
-	res.json({authToken: token});
+	res.json({ authToken: token });
 };

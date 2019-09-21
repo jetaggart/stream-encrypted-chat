@@ -1,5 +1,5 @@
-import React, {PureComponent} from 'react';
-import {MessageSimple,} from "stream-chat-react";
+import React, { PureComponent } from 'react';
+import { MessageSimple, } from "stream-chat-react";
 
 export class MessageEncrypted extends PureComponent {
   constructor(props) {
