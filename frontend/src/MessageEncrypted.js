@@ -27,8 +27,10 @@ export class MessageEncrypted extends PureComponent {
 
   _decryptText = async () => {
     const messageIdentity = this.props.isMyMessage(this.props.message) ? this.props.identity : this.props.chatWith;
-    return this.props.virgil.eThree
-      .decrypt(this.props.message.text, this.props.virgil.publicKeys[messageIdentity]);
+    return this.props.virgil.eThree.decrypt(
+      this.props.message.text,
+      this.props.virgil.publicKeys[messageIdentity]
+    );
   };
 
   render = () => {
@@ -36,7 +38,7 @@ export class MessageEncrypted extends PureComponent {
       ...this.props,
       message: {
         ...this.props.message,
-        text: this.state.decryptedText || ""
+        text: this.state.decryptedText || "wtf"
       }
     };
 

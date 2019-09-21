@@ -17,14 +17,14 @@ export class StartChat extends PureComponent {
     this.setState({ chatWith: event.target.value });
   };
 
-  _handleNext = async (event) => {
+  _handleRegister = async (event) => {
     event.preventDefault();
     post("http://localhost:8080/v1/authenticate", { identity: this.state.identity })
       .then(res => res.authToken)
       .then(this._connect);
   };
 
-  _handleSubmit = async (event) => {
+  _handleStartChat = async (event) => {
     event.preventDefault();
 
     try {
@@ -40,38 +40,25 @@ export class StartChat extends PureComponent {
       });
 
       this.props.onConnect({
-        virgil: {
-          ...this.state.virgil,
-          publicKeys
-        },
-        stream: {
-          ...this.state.stream,
-          channel
-        }
-      })
+        identity: this.state.identity,
+        chatWith: this.state.chatWith,
+        virgil:   { ...this.state.virgil, publicKeys },
+        stream:   { ...this.state.stream, channel }
+      });
     } catch (err) {
-      this.setState({
-        error: err.message
-      })
+      this.setState({ error: err.message });
     }
   };
 
   _connectStream = (response) => {
     const client = new StreamChat(response.apiKey);
+    client.setUser({
+      id:    response.user.id,
+      name:  response.user.name,
+      image: response.user.image
+    }, response.token);
 
-    client.setUser(
-      {
-        id:    response.user.id,
-        name:  response.user.name,
-        image: response.user.image
-      },
-      response.token
-    );
-
-    return {
-      ...response,
-      client
-    };
+    return { ...response, client };
   };
 
   _connectVirgil = async (response) => {
@@ -79,14 +66,11 @@ export class StartChat extends PureComponent {
     try {
       await eThree.register();
     } catch {
-      // already registered;
+      // already registered
     }
 
     try {
-      return {
-        ...response,
-        eThree,
-      };
+      return { ...response, eThree, };
     } catch {
       return {
         error: 'Other user is not registered. Open another window and register that identity. Refresh browser to start over.'
@@ -104,19 +88,6 @@ export class StartChat extends PureComponent {
     this.setState({ stream, virgil })
   };
 
-  _buildForm = (field, title, subtitle, submitLabel, submit, handleFieldChange) => {
-    return (
-      <div className="container">
-        <form className="card" onSubmit={submit}>
-          <label htmlFor={field}>{title}</label>
-          <div className='subtitle'>{subtitle}</div>
-          <input id="identity" type="text" name={field} value={this.state[field]} onChange={handleFieldChange}/>
-          <input type="submit" value={submitLabel}/>
-        </form>
-      </div>
-    )
-  };
-
   render() {
     if (this.state.error !== '') {
       return (
@@ -126,11 +97,39 @@ export class StartChat extends PureComponent {
           </div>
         </div>
       )
-    } else if (this.state.virgil && this.state.stream) {
-      const subtitle = 'Registered as "' + this.state.identity + '". Open another window to register another identity.';
-      return this._buildForm('chatWith', 'Chat with?', subtitle, 'Start Chat', this._handleSubmit, this._handleChatWithChange);
-    } else {
-      return this._buildForm('identity', 'Who are you?', '', 'Register', this._handleNext, this._handleIdentityChange);
     }
+
+    let form;
+    if (this.state.virgil && this.state.stream) {
+      form = {
+        field:             'chatWith',
+        title:             'Chat with',
+        subtitle:          'Registered as "' + this.state.identity + '". Open another window to register another identity.',
+        submitLabel:       'Start Chat',
+        submit:            this._handleStartChat,
+        handleFieldChange: this._handleChatWithChange
+      }
+    } else {
+      form = {
+        field:             'identity',
+        title:             'Who are you?',
+        subtitle:          '',
+        submitLabel:       'Register',
+        submit:            this._handleRegister,
+        handleFieldChange: this._handleIdentityChange
+      };
+    }
+
+    return (
+      <div className="container">
+        <form className="card" onSubmit={form.submit}>
+          <label htmlFor={form.field}>{form.title}</label>
+          <div className='subtitle'>{form.subtitle}</div>
+          <input id="identity" type="text" name={form.field} value={this.state[form.field]}
+                 onChange={form.handleFieldChange}/>
+          <input type="submit" value={form.submitLabel}/>
+        </form>
+      </div>
+    )
   }
 }
