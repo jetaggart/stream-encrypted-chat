@@ -7,20 +7,13 @@ import { post } from './Http'
 
 import 'stream-chat-react/dist/css/index.css';
 import { MessageInputEncrypted } from "./MessageInputEncrypted";
+import { StartChat } from "./StartChat";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { identity: '', chatWith: '' };
+    this.state = { identity: '', chatWith: '', error: '' };
   }
-
-  _handleIdentityChange = (event) => {
-    this.setState({ identity: event.target.value });
-  };
-
-  _handleChatWithChange = (event) => {
-    this.setState({ chatWith: event.target.value });
-  };
 
   _connectStream = (response) => {
     const chatClient = new StreamChat(response.apiKey);
@@ -60,15 +53,20 @@ class App extends React.Component {
       // already registered;
     }
 
-    const publicKeys =  await eThree.lookupPublicKeys([this.state.identity, this.state.chatWith]);
-
-    this.setState({
-      virgil: {
-        ...response,
-        eThree,
-        publicKeys
-      }
-    });
+    try {
+      const publicKeys = await eThree.lookupPublicKeys([this.state.identity, this.state.chatWith]);
+      this.setState({
+        virgil: {
+          ...response,
+          eThree,
+          publicKeys
+        }
+      });
+    } catch {
+      this.setState({
+        error: 'Other user is not registered. Open another window and register that identity. Refresh browser to start over.'
+      })
+    }
   };
 
   _connect = (authToken) => {
@@ -77,13 +75,6 @@ class App extends React.Component {
 
     post("http://localhost:8080/v1/virgil-token", {}, authToken)
       .then(this._connectVirgil);
-  };
-
-  _handleSubmit = (event) => {
-    event.preventDefault();
-    post("http://localhost:8080/v1/authenticate", { identity: this.state.identity })
-      .then(res => res.authToken)
-      .then(this._connect);
   };
 
   _buildMessageEncrypted = (props) => {
@@ -96,7 +87,25 @@ class App extends React.Component {
     return <MessageEncrypted {...newProps}/>
   };
 
+  setChat = (data) => {
+    this.setState({
+      identity: data.identity,
+      chatWith: data.chatWith,
+    });
+    this._connect(data.authToken);
+  };
+
   render = () => {
+    if (this.state.error !== '') {
+      return (
+        <div className="container">
+          <div className="card">
+            {this.state.error}
+          </div>
+        </div>
+      )
+    }
+
     if (this.state.stream && this.state.virgil) {
       return (
         <Chat client={this.state.stream.client} theme={'messaging light'}>
@@ -111,19 +120,7 @@ class App extends React.Component {
         </Chat>
       )
     } else {
-      return (
-        <form onSubmit={this._handleSubmit}>
-          <label>
-            Who are you?
-            <input type="text" name="identity" value={this.state.identity} onChange={this._handleIdentityChange}/>
-          </label>
-          <label>
-            Who do you want to chat with?
-            <input type="text" name="chatWith" value={this.state.chatWith} onChange={this._handleChatWithChange}/>
-          </label>
-          <input type="submit" value="Submit"/>
-        </form>
-      )
+      return <StartChat setChat={this.setChat}/>
     }
   }
 }
