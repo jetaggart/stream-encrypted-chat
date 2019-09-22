@@ -175,7 +175,7 @@ Now that we have our backend setup and running we can authenticate with the
 backend. If you're running the application you'll be presented with a screen
 like so:
 
-![Registration](https://bischmeyer.com/s/PwEJR8StMYoTktH)
+![Registration](https://ibin.co/4vvtGI3QmdkH.png)
 
 This is a simple react form that takes what is typed, stores it in the state as
 `identity` and authenticates with that information. Once we have the data from
