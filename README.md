@@ -112,9 +112,9 @@ application provides three endpoints:
 * `POST /v1/authenticate`: This endpoint generates an auth token that allows the
   React frontend to communicate with `/v1/stream-credentials` and
   `/v1/virgil-credentials`. To keep things simple, this endpoint simply allows
-  the user to simulate and user. The frontend simply tells the backend who it
-  wants to authenticate as. If you build off of this code, this would need to be
-  rewritten to be a real authentication endpoint.
+  the client to be any user. The frontend simply tells the backend who it wants
+  to authenticate as. In your application, this should be replaces with your
+  API's authentication endpoint.
 * `POST /v1/stream-credentials`: This returns the data required for the React
   app to establish a session with Stream. In order return this info we need to
   tell Stream this user exists and ask them to create a valid auth token:
@@ -156,9 +156,9 @@ application provides three endpoints:
   * `user`: This object contains the data that the frontend needs to connect and
     render the user's view.
 
-* `POST /v1/virgil-credentials`: This returns the JWT token used to connect the
-  frontend to Virgil. In order for the user to have a valid auth token for
-  Virgil, we use the Virgil Crypto SDK to generate this for us: 
+* `POST /v1/virgil-credentials`: This returns the authentication token used to
+  connect the frontend to Virgil. We use the Virgil Crypto SDK to generate a
+  valid auth token for us:
   ```javascript
   // backend/src/controllers/v1/virgil-credentials.js
   const virgilCrypto = new VirgilCrypto();
@@ -177,34 +177,33 @@ application provides three endpoints:
     res.json({ token: virgilJwtToken.toString() });
   };
   ```
-  
-  All we need to connect to Virgil is the `token` so this is all that's returned
-  to the frontend.
+  In this case, the frontend only needs the auth token.
   
 ## Step 1. User authenticates With Backend
-Now that we have our backend setup and running we can authenticate with the
-backend. If you're running the application you'll be presented with a screen
-like so:
+Now that we have our backend set up and running, it is time to authenticate with
+the backend. If you're running the application, you'll be presented with a
+screen like so:
 
 ![Registration](https://ibin.co/4vvtGI3QmdkH.png)
 
-This is a simple react form that takes what is typed, stores it in the state as
-`identity` and authenticates with that information. Once we have the data from
-the form we authenticate against the backend:
+This is a simple React form that takes the provided input, stores it in the
+state as `sender`, and uses that information to authenticate against the
+backend:
 
 ```javascript
 // frontend/src/StartChat.js
-post("http://localhost:8080/v1/authenticate", { identity: this.state.identity })
+post("http://localhost:8080/v1/authenticate", { sender: this.state.sender })
   .then(res => res.authToken)
   .then(this._connect);
 ```
 
-Upon creating an identity with an `authToken` we're now ready to connect to
+Once we have created an sender identity with an auth token, we can connect to
 Stream and Virgil.
 
 ## Step 2. User connects to Stream
-Using the credentials from step `1.` we can request Stream credentials from the
-backend and connect our frontend client to Stream:
+Using the credentials from [Step 1.](#step-1-user-authenticats-with-backend), we
+can request Stream credentials from the backend. Using those we connect our
+frontend client to Stream:
 
 ```javascript
 // frontend/src/StartChat.js
@@ -214,13 +213,12 @@ const client = new StreamChat(response.apiKey);
 client.setUser(response.user, response.token);
 ```
 
-This initializes the `StreamChat` instance from the `stream-chat-react` library
-and authenticates the frontend app to a user using the token generated in the
-backend.
+This initializes the `StreamChat` object from the `Stream Chat React` library
+and authenticates a user using the token generated in the backend.
 
 ## Step 3. User connects to Virgil
 Along side connecting to Stream we also connect to Virgil. Once again, using the
-credentials acquired in step `1.` we ask the backend to generate us a Virgil
+credentials acquired in `Step 1.` we ask the backend to generate us a Virgil
 auth token. Using this token we initialize the `EThree` instance from Virgil's
 `e3kit` library:
 
