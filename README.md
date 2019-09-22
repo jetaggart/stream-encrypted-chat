@@ -411,9 +411,6 @@ message is our message, find the correct public key and ask Virgil to decrypt
 it. Once that's done we can pass that along with the rest of the props to the
 built in Stream component. 
 
-The receiver will see a screen like this:
-
---- INSERT SCREENSHOT---
 
 # Where to go from here
 This tutorial is intended to get you up and running as fast as possible. Because
