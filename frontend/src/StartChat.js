@@ -1,12 +1,19 @@
-import React, { PureComponent } from 'react';
-import { StreamChat } from 'stream-chat';
-import { EThree, LookupError } from '@virgilsecurity/e3kit';
 import { post } from './Http'
+import { StreamChat } from 'stream-chat';
+import { EThree, IdentityAlreadyExistsError, LookupError } from '@virgilsecurity/e3kit';
+import React, { PureComponent } from 'react';
 
 export class StartChat extends PureComponent {
   constructor(props) {
     super(props);
-    this.state = { identity: '', chatWith: '', error: '' }
+
+    this.state = {
+      chatWith: '',
+      identity: '',
+      stream: null,
+      virgil: null,
+      error: null,
+    }
   };
 
   _handleIdentityChange = (event) => {
@@ -17,7 +24,7 @@ export class StartChat extends PureComponent {
     this.setState({ chatWith: event.target.value });
   };
 
-  _handleRegister = async (event) => {
+  _handleRegister = (event) => {
     event.preventDefault();
     post("http://localhost:8080/v1/authenticate", { identity: this.state.identity })
       .then(res => res.authToken)
@@ -34,16 +41,16 @@ export class StartChat extends PureComponent {
       members.sort();
 
       const channel = this.state.stream.client.channel('messaging', {
-        image:   `https://getstream.io/random_svg/?id=rapid-recipe-0&name=${members.join("+")}`,
-        name:    members.join(", "),
+        image: `https://getstream.io/random_svg/?id=rapid-recipe-0&name=${members.join("+")}`,
+        name: members.join(", "),
         members: members,
       });
 
       this.props.onConnect({
         identity: this.state.identity,
         chatWith: this.state.chatWith,
-        virgil:   { ...this.state.virgil, publicKeys },
-        stream:   { ...this.state.stream, channel }
+        stream: { ...this.state.stream, channel },
+        virgil: { ...this.state.virgil, publicKeys }
       });
     } catch (err) {
       if (err instanceof LookupError) {
@@ -57,8 +64,8 @@ export class StartChat extends PureComponent {
   _connectStream = (response) => {
     const client = new StreamChat(response.apiKey);
     client.setUser({
-      id:    response.user.id,
-      name:  response.user.name,
+      id: response.user.id,
+      name: response.user.name,
       image: response.user.image
     }, response.token);
 
@@ -69,11 +76,15 @@ export class StartChat extends PureComponent {
     const eThree = await EThree.initialize(() => response.token);
     try {
       await eThree.register();
-    } catch {
-      // already registered
+    } catch (err) {
+      if (err instanceof IdentityAlreadyExistsError) {
+        // already registered, ignore
+      } else {
+        this.setState({ error: err.message });
+      }
     }
 
-    return { ...response, eThree, };
+    return { ...response, eThree };
   };
 
   _connect = async (authToken) => {
@@ -90,20 +101,20 @@ export class StartChat extends PureComponent {
     let form;
     if (this.state.virgil && this.state.stream) {
       form = {
-        field:             'chatWith',
-        title:             'Who do you want to chat with?',
-        subtitle:          'Registered as "' + this.state.identity + '". Open this app in another window to register another user, or type a previously registered username below to start a chat.',
-        submitLabel:       'Start Chat',
-        submit:            this._handleStartChat,
+        field: 'chatWith',
+        title: 'Who do you want to chat with?',
+        subtitle: 'Registered as "' + this.state.identity + '". Open this app in another window to register another user, or type a previously registered username below to start a chat.',
+        submitLabel: 'Start Chat',
+        submit: this._handleStartChat,
         handleFieldChange: this._handleChatWithChange
       }
     } else {
       form = {
-        field:             'identity',
-        title:             'Who are you?',
-        subtitle:          'Enter a username.',
-        submitLabel:       'Register',
-        submit:            this._handleRegister,
+        field: 'identity',
+        title: 'Who are you?',
+        subtitle: 'Enter a username.',
+        submitLabel: 'Register',
+        submit: this._handleRegister,
         handleFieldChange: this._handleIdentityChange
       };
     }
@@ -116,9 +127,7 @@ export class StartChat extends PureComponent {
           <input id="identity" type="text" name={form.field} value={this.state[form.field]}
                  onChange={form.handleFieldChange}/>
           <input type="submit" value={form.submitLabel}/>
-          <div className="error">
-            {this.state.error}
-          </div>
+          <div className="error">{this.state.error}</div>
         </form>
       </div>
     )

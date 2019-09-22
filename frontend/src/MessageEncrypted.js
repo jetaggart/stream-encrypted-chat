@@ -6,7 +6,7 @@ export class MessageEncrypted extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { decryptedText: null };
   }
 
   componentDidMount = () => {
@@ -38,7 +38,7 @@ export class MessageEncrypted extends PureComponent {
       ...this.props,
       message: {
         ...this.props.message,
-        text: this.state.decryptedText || "wtf"
+        text: this.state.decryptedText || ""
       }
     };
 

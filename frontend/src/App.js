@@ -1,23 +1,27 @@
-import React from 'react';
-import { Channel, ChannelHeader, Chat, MessageList, Thread, Window } from 'stream-chat-react';
 import { MessageEncrypted } from './MessageEncrypted';
-
-import 'stream-chat-react/dist/css/index.css';
 import { MessageInputEncrypted } from "./MessageInputEncrypted";
+import React from 'react';
 import { StartChat } from "./StartChat";
+import { Channel, ChannelHeader, Chat, MessageList, Thread, Window } from 'stream-chat-react';
+import 'stream-chat-react/dist/css/index.css';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      identity: null,
+      chatWith: null,
+      stream: null,
+      virgil: null
+    };
   }
 
   _buildMessageEncrypted = (props) => {
     const newProps = {
       ...props,
-      virgil:   this.state.virgil,
       identity: this.state.identity,
       chatWith: this.state.chatWith,
+      virgil: this.state.virgil
     };
     return <MessageEncrypted {...newProps}/>
   };

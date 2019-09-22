@@ -75,4 +75,9 @@ code {
     outline: none;
     -webkit-box-shadow: none;
     box-shadow: none;
+
+}
+
+.str-chat__input-fileupload {
+    display: none !important;
 }

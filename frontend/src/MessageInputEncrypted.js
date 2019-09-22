@@ -1,5 +1,5 @@
-import React, { PureComponent } from 'react';
 import { MessageInput } from "stream-chat-react";
+import React, { PureComponent } from 'react';
 
 export class MessageInputEncrypted extends PureComponent {
   sendMessageEncrypted = async (data) => {
@@ -15,6 +15,7 @@ export class MessageInputEncrypted extends PureComponent {
       ...this.props,
       sendMessage: this.sendMessageEncrypted
     };
+
     return <MessageInput {...newProps} />
   }
 }
