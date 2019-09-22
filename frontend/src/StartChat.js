@@ -8,25 +8,25 @@ export class StartChat extends PureComponent {
     super(props);
 
     this.state = {
-      chatWith: '',
-      identity: '',
+      receiver: '',
+      sender: '',
       stream: null,
       virgil: null,
       error: null,
     }
   };
 
-  _handleIdentityChange = (event) => {
-    this.setState({ identity: event.target.value });
+  _handlesenderChange = (event) => {
+    this.setState({ sender: event.target.value });
   };
 
-  _handleChatWithChange = (event) => {
-    this.setState({ chatWith: event.target.value });
+  _handlereceiverChange = (event) => {
+    this.setState({ receiver: event.target.value });
   };
 
   _handleRegister = (event) => {
     event.preventDefault();
-    post("http://localhost:8080/v1/authenticate", { identity: this.state.identity })
+    post("http://localhost:8080/v1/authenticate", { sender: this.state.sender })
       .then(res => res.authToken)
       .then(this._connect);
   };
@@ -35,9 +35,7 @@ export class StartChat extends PureComponent {
     event.preventDefault();
 
     try {
-      const publicKeys = await this.state.virgil.eThree.lookupPublicKeys([this.state.identity, this.state.chatWith]);
-
-      let members = [this.state.identity, this.state.chatWith];
+      let members = [this.state.sender, this.state.receiver];
       members.sort();
 
       const channel = this.state.stream.client.channel('messaging', {
@@ -46,9 +44,11 @@ export class StartChat extends PureComponent {
         members: members,
       });
 
+      const publicKeys = await this.state.virgil.eThree.lookupPublicKeys([this.state.sender, this.state.receiver]);
+
       this.props.onConnect({
-        identity: this.state.identity,
-        chatWith: this.state.chatWith,
+        sender: this.state.sender,
+        receiver: this.state.receiver,
         stream: { ...this.state.stream, channel },
         virgil: { ...this.state.virgil, publicKeys }
       });
@@ -97,21 +97,21 @@ export class StartChat extends PureComponent {
     let form;
     if (this.state.virgil && this.state.stream) {
       form = {
-        field: 'chatWith',
+        field: 'receiver',
         title: 'Who do you want to chat with?',
-        subtitle: 'Registered as "' + this.state.identity + '". Open this app in another window to register another user, or type a previously registered username below to start a chat.',
+        subtitle: 'Registered as "' + this.state.sender + '". Open this app in another window to register another user, or type a previously registered username below to start a chat.',
         submitLabel: 'Start Chat',
         submit: this._handleStartChat,
-        handleFieldChange: this._handleChatWithChange
+        handleFieldChange: this._handlereceiverChange
       }
     } else {
       form = {
-        field: 'identity',
+        field: 'sender',
         title: 'Who are you?',
         subtitle: 'Enter a username.',
         submitLabel: 'Register',
         submit: this._handleRegister,
-        handleFieldChange: this._handleIdentityChange
+        handleFieldChange: this._handlesenderChange
       };
     }
 
@@ -120,7 +120,7 @@ export class StartChat extends PureComponent {
         <form className="card" onSubmit={form.submit}>
           <label htmlFor={form.field}>{form.title}</label>
           <div className='subtitle'>{form.subtitle}</div>
-          <input id="identity" type="text" name={form.field} value={this.state[form.field]}
+          <input id="sender" type="text" name={form.field} value={this.state[form.field]}
                  onChange={form.handleFieldChange}/>
           <input type="submit" value={form.submitLabel}/>
           <div className="error">{this.state.error}</div>

@@ -16,7 +16,7 @@ const generator = new JwtGenerator({
 
 
 exports.virgilCredentials = async (req, res) => {
-  const virgilJwtToken = generator.generateToken(req.user.identity);
+  const virgilJwtToken = generator.generateToken(req.user.sender);
 
   res.json({ token: virgilJwtToken.toString() });
 };

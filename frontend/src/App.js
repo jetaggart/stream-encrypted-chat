@@ -9,8 +9,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      identity: null,
-      chatWith: null,
+      sender: null,
+      receiver: null,
       stream: null,
       virgil: null
     };
@@ -19,8 +19,8 @@ class App extends React.Component {
   _buildMessageEncrypted = (props) => {
     const newProps = {
       ...props,
-      identity: this.state.identity,
-      chatWith: this.state.chatWith,
+      sender: this.state.sender,
+      receiver: this.state.receiver,
       virgil: this.state.virgil
     };
     return <MessageEncrypted {...newProps}/>

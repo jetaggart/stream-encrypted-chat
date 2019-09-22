@@ -12,9 +12,9 @@ exports.streamCredentials = async (req, res) => {
     const client = new StreamChat(apiKey, apiSecret);
 
     const user = Object.assign({}, data, {
-      id: `${req.user.identity}`,
+      id: `${req.user.sender}`,
       role: 'admin',
-      image: `https://robohash.org/${req.user.identity}`,
+      image: `https://robohash.org/${req.user.sender}`,
     });
     const token = client.createToken(user.id);
     await client.updateUsers([user]);
