@@ -225,7 +225,7 @@ Once we're connected to both Stream and Virgil we're ready to start chatting
 with someone. After you've clicked `Register` in the tutorial app, you'll see a
 screen like this:
 
--- insert image ---
+![Start Chat](https://ibin.co/4vvty06h6BwP.png)
 
 This form asks for the identity of the user you want to chat with. If they have
 registered in another browser window, we can create a `Stream Chat Channel`
@@ -293,7 +293,7 @@ Stream. First we need to show the user the chat room:
 This renders the `stream-chat-react` `Chat` component that builds a great out of
 the box experience for our users. If you're following along you'll see this:
 
---- INSERT SCREENSHOT ---
+![Empty Chat](https://ibin.co/4vvuFAlpisHh.png)
 
 Notice the line where we include our custom class `MessageInputEncrypted`. This
 component wraps a `stream-chat-react` `MessageInput` component to encrypt before
@@ -328,7 +328,7 @@ passed to the Stream channel. Now all Stream will see is the ciphertext!
 The last thing to do is decrypt the sender's message on the receiver's side.
 Assuming you've gone through chat room setup you will see:
 
---- INSERT SCREENSHOT ---
+![Full Chat](https://ibin.co/4vvuRLiJVjvN.png)
 
 In order to do this we follow a similar pattern to step `6.`. If you look at how
 we create the `MessageList` you'll see a custom `Message` component called
