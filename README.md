@@ -175,7 +175,7 @@ Now that we have our backend setup and running we can authenticate with the
 backend. If you're running the application you'll be presented with a screen
 like so:
 
--- INSERT SCREENSHOT --
+![Registration](https://bischmeyer.com/s/PwEJR8StMYoTktH)
 
 This is a simple react form that takes what is typed, stores it in the state as
 `identity` and authenticates with that information. Once we have the data from
@@ -225,7 +225,7 @@ Once we're connected to both Stream and Virgil we're ready to start chatting
 with someone. After you've clicked `Register` in the tutorial app, you'll see a
 screen like this:
 
---- INSERT SCREENSHOT ----
+-- insert image ---
 
 This form asks for the identity of the user you want to chat with. If they have
 registered in another browser window, we can create a `Stream Chat Channel`
