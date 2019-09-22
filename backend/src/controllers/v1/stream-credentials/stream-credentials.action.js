@@ -3,21 +3,11 @@ import { StreamChat } from 'stream-chat';
 
 dotenv.config();
 
-exports.streamToken = async (req, res) => {
+exports.streamCredentials = async (req, res) => {
 	try {
 		const data = req.body;
-
-		let apiKey;
-		let apiSecret;
-
-		if (process.env.STREAM_URL) {
-			[apiKey, apiSecret] = process.env.STREAM_URL.substr(8)
-				.split('@')[0]
-				.split(':');
-		} else {
-			apiKey = process.env.STREAM_API_KEY;
-			apiSecret = process.env.STREAM_API_SECRET;
-		}
+		const apiKey = process.env.STREAM_API_KEY;
+		const apiSecret = process.env.STREAM_API_SECRET;
 
 		const client = new StreamChat(apiKey, apiSecret);
 

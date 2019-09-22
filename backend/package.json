@@ -12,7 +12,7 @@
 		"dev": "nodemon --exec npx babel-node src/index.js",
 		"lint": "yarn prettier --write --check --config ./.prettierrc \"**/*.js\" && eslint --fix ./src"
 	},
-	"author": "Nick Parsons <nparsons08@gmail.com>",
+	"author": "Nick Parsons <nparsons08@gmail.com> & Jeff Taggart <jeff@jetaggart.com>",
 	"license": "MIT",
 	"dependencies": {
 		"@babel/cli": "^7.4.4",

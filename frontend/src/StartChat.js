@@ -61,18 +61,17 @@ export class StartChat extends PureComponent {
     }
   };
 
-  _connectStream = (response) => {
+  _connectStream = async (backendAuthToken) => {
+    const response = await post("http://localhost:8080/v1/stream-credentials", {}, backendAuthToken);
+
     const client = new StreamChat(response.apiKey);
-    client.setUser({
-      id: response.user.id,
-      name: response.user.name,
-      image: response.user.image
-    }, response.token);
+    client.setUser(response.user, response.token);
 
     return { ...response, client };
   };
 
-  _connectVirgil = async (response) => {
+  _connectVirgil = async (backendAuthToken) => {
+    const response = await post("http://localhost:8080/v1/virgil-credentials", {}, backendAuthToken);
     const eThree = await EThree.initialize(() => response.token);
     try {
       await eThree.register();
@@ -88,11 +87,8 @@ export class StartChat extends PureComponent {
   };
 
   _connect = async (authToken) => {
-    const stream = await post("http://localhost:8080/v1/stream-token", {}, authToken)
-      .then(this._connectStream);
-
-    const virgil = await post("http://localhost:8080/v1/virgil-token", {}, authToken)
-      .then(this._connectVirgil);
+    const stream = await this._connectStream(authToken);
+    const virgil = await this._connectVirgil(authToken);
 
     this.setState({ stream, virgil })
   };

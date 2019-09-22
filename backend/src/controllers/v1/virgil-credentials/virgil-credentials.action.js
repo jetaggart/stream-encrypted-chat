@@ -3,8 +3,9 @@ import dotenv from 'dotenv';
 const { JwtGenerator } = require('virgil-sdk');
 const { VirgilCrypto, VirgilAccessTokenSigner } = require('virgil-crypto');
 
-const virgilCrypto = new VirgilCrypto();
 dotenv.config();
+
+const virgilCrypto = new VirgilCrypto();
 
 const generator = new JwtGenerator({
 	appId: process.env.VIRGIL_APP_ID,
@@ -14,7 +15,7 @@ const generator = new JwtGenerator({
 });
 
 
-exports.virgilToken = async (req, res) => {
+exports.virgilCredentials = async (req, res) => {
 	const virgilJwtToken = generator.generateToken(req.user.identity);
 
 	res.json({ token: virgilJwtToken.toString() });
