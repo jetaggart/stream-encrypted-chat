@@ -37,7 +37,7 @@ To build this application we're going to rely on three libraries,
 these so encryption happens in the browser before sending a message and
 decryption and verification happens in the receiver's browser.
 
-The application preforms following steps accomplish full end-to-end encryption:
+The application performs following steps accomplish full end-to-end encryption:
 
 1. A user authenticates with your backend.
 2. User's app requests a Stream auth token and api key from the backend. The
