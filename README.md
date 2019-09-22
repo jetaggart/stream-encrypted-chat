@@ -201,7 +201,7 @@ Once we have created an sender identity with an auth token, we can connect to
 Stream and Virgil.
 
 ## Step 2. User connects to Stream
-Using the credentials from [Step 1.](#step-1-user-authenticates-with-backend), we
+Using the credentials from [Step 1](#step-1-user-authenticates-with-backend), we
 can request Stream credentials from the backend. Using those we connect our
 frontend client to Stream:
 
@@ -217,10 +217,9 @@ This initializes the `StreamChat` object from the `Stream Chat React` library
 and authenticates a user using the token generated in the backend.
 
 ## Step 3. User connects to Virgil
-Along side connecting to Stream we also connect to Virgil. Once again, using the
-credentials acquired in `Step 1.` we ask the backend to generate us a Virgil
-auth token. Using this token we initialize the `EThree` instance from Virgil's
-`e3kit` library:
+Once again, using the credentials acquired in [Step 1](#step-1-user-authenticates-with-backend) 
+we ask the backend to generate a Virgil auth token. Using this token we 
+initialize the `EThree` object from Virgil's `e3kit` library:
 
 ```javascript
 // frontend/src/StartChat.js
@@ -230,14 +229,13 @@ await eThree.register();
 ```
 
 ## Step 4. Create Stream Chat Channel
-Once we're connected to both Stream and Virgil we're ready to start chatting
-with someone. After you've clicked `Register` in the tutorial app, you'll see a
-screen like this:
+Once we're connected to both Stream and Virgil, we're ready to start chatting with someone. 
+After you've clicked "Register" in the tutorial app, you'll see a screen like this:
 
 ![Start Chat](https://ibin.co/4vvty06h6BwP.png)
 
 This form asks for the identity of the user you want to chat with. If they have
-registered in another browser window, we can create a `Stream Chat Channel`
+registered in another browser window, we can create a Stream Chat `Channel` 
 that's private to those two members:
 
 ```javascript
@@ -252,21 +250,21 @@ const channel = this.state.stream.client.channel('messaging', {
 });
 ```
 
-The client we're accessing in the state is the one created in step `2.`. Calling
+The client we're accessing in the state is the one created in [Step 2](#step-2-user-connects-to-stream). Calling
 `.channel` will create or join a unique channel based on the identities of the
 members. Only those two members will be allowed in. However, this is not enough
-to protect Stream or others from viewing those user's messages.
+to protect Stream or others from viewing those users' messages.
 
 ## Step 5. Lookup Virgil public keys
-In order to encrypt a message before sending it through a Stream channel, we
-need to look up the receiver's public key:
+In order to encrypt a message before sending it through a Stream channel, we need 
+to look up the receiver's public key:
 
 ```javascript
 // frontend/src/StartChat.js
 const publicKeys = await this.state.virgil.eThree.lookupPublicKeys([this.state.identity, this.state.chatWith]);
 ```
 
-The `eThree` instance in our state is from step `3.`. Assuming that the sender's
+The `eThree` instance in our state is from [Step 3](#step-3-user-connects-to-virgil). Assuming that the sender's
 identity is `will` and the receiver's identity is `sara`, this returns an object
 that looks like:
 
@@ -277,13 +275,13 @@ that looks like:
 }
 ```
 
-Since we'll need to decrypt our own messages, and for convenience, we ask for
-both at the same time. These will be used later to both encrypt messages from
-the sender and verify messages from the other user.
+Since we need to decrypt received own messages for display, and for convenience, 
+we ask for both public keys at the same time.
+
 
 ## Step 6. Sender encrypts message and sends it via Stream
-We have everything we need to send a secure, end-to-end encrypted message via
-Stream. First we need to show the user the chat room:
+We have everything we need to send a secure, end-to-end encrypted message via Stream. 
+Time to chat! First we need to show the user the chat room:
 
 ```javascript
 // frontend/src/App.js
@@ -299,14 +297,14 @@ Stream. First we need to show the user the chat room:
 </Chat>
 ```
 
-This renders the `stream-chat-react` `Chat` component that builds a great out of
-the box experience for our users. If you're following along you'll see this:
+This renders the Stream React Chat component that creates a great out-of-the box experience 
+for our users. If you're following along you'll see this:
 
 ![Empty Chat](https://ibin.co/4vvw8sYTfJCM.png)
 
-Notice the line where we include our custom class `MessageInputEncrypted`. This
-component wraps a `stream-chat-react` `MessageInput` component to encrypt before
-sending the message over the channel:
+Notice the line where we include our custom class `MessageInputEncrypted`. 
+This component uses the sender's public key from Virgil to encrypt, then wrap, a Stream React `MessageInput` 
+component before sending the message over the Stream channel:
 
 ```javascript
 // frontend/src/MessageInputEncrypted.js
@@ -330,26 +328,26 @@ export class MessageInputEncrypted extends PureComponent {
 }
 ```
 
-Using the senders public key from Virgil, we encrypt our text. This text is then
-passed to the Stream channel. Now all Stream will see is the ciphertext!
+Now all Stream will see is the ciphertext!
 
 ## Step 7. Receiver decrypts and reads message
-The last thing to do is decrypt the sender's message on the receiver's side.
+The last thing to do is decrypt the sender's message on the receiver's side. 
 Assuming you've gone through chat room setup you will see:
 
 ![Full Chat](https://ibin.co/4vvvotfqK37K.png)
 
-In order to do this we follow a similar pattern to step `6.`. If you look at how
-we create the `MessageList` you'll see a custom `Message` component called
-`MessageEncrypted`:
+To decrypt the message we follow a similar pattern to [Step 6](#step-6). 
+If you look at how we create the `MessageList` you'll see a custom `Message` 
+component called `MessageEncrypted`:
 
 ```javascript
 // frontend/src/App.js
 <MessageList Message={this._buildMessageEncrypted}/>
 ```
 
-Since we need to add props for decryption for our custom `Message` component, we
-add them to the props passed by the Stream React components:
+Since we need to provide decryption props to add props for decryption 
+to our custom `Message` component, we add them to the props passed by the 
+Stream React:
 
 ```javascript
 // frontend/src/App.js
@@ -364,7 +362,7 @@ _buildMessageEncrypted = (props) => {
 };
 ```
 
-Once we have the props we need we can decrypt each message:
+Once we have the props we need, we can decrypt each message:
 
 ```javascript
 // frontend/src/MessageEncrypted.js
@@ -414,22 +412,18 @@ export class MessageEncrypted extends PureComponent {
 }
 ```
 
-This class simply decrypts the message before rendering the `MessageSimple`
-component from `stream-chat-react`. To do this, we first determine if the
-message is our message, find the correct public key and ask Virgil to decrypt
-it. Once that's done we can pass that along with the rest of the props to the
-built in Stream component. 
+This class decrypts the message before rendering the `MessageSimple` component from Stream Chat React. To do this, we first determine if the message is actually our message with Stream's `.isMyMessage`. We then find the correct public key and ask Virgil to decrypt it. Once that's done, we can pass the key along with the rest of the props to the Stream's `MessageSimple` component.
 
 # Where to go from here
-This tutorial is intended to get you up and running as fast as possible. Because
-of this, some critical functionality may be missing for your application. Here
-are some tips of what to do next for your app.
+This tutorial is intended to get you up and running as fast as possible. Because of this,
+some critical functionality may be missing from your application. 
+Here are some tips for what to do next with your app.
 
 * Build real user registration and protect identity registration. This tutorial
   simplified registration and retrieving valid tokens to interact with Stream
   and Virgil.
-* Backup user's private keys. Using Virgil's `eThree.backupPrivateKey(pwd)` will
-  securely store the private key for restoration on any device.
+* Backup user's private keys to restore sessions and for multiple devices. 
+  Using Virgil's `eThree.backupPrivateKey(pwd)` will securely store the private key for restoration on any device.
 * Integrate user image and file uploads. This functionality is hidden in this
   app via CSS. You can look at hooking into Stream React Chat's
   [MessageInput](https://getstream.github.io/stream-chat-react/#messageinput) or
