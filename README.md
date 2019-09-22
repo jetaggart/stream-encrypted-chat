@@ -293,7 +293,7 @@ Stream. First we need to show the user the chat room:
 This renders the `stream-chat-react` `Chat` component that builds a great out of
 the box experience for our users. If you're following along you'll see this:
 
-![Empty Chat](https://ibin.co/4vvuFAlpisHh.png)
+![Empty Chat](https://ibin.co/4vvw8sYTfJCM.png)
 
 Notice the line where we include our custom class `MessageInputEncrypted`. This
 component wraps a `stream-chat-react` `MessageInput` component to encrypt before
@@ -328,7 +328,7 @@ passed to the Stream channel. Now all Stream will see is the ciphertext!
 The last thing to do is decrypt the sender's message on the receiver's side.
 Assuming you've gone through chat room setup you will see:
 
-![Full Chat](https://ibin.co/4vvuRLiJVjvN.png)
+![Full Chat](https://ibin.co/4vvvotfqK37K.png)
 
 In order to do this we follow a similar pattern to step `6.`. If you look at how
 we create the `MessageList` you'll see a custom `Message` component called
