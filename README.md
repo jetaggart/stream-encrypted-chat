@@ -424,6 +424,10 @@ actually our message with Stream's `.isMyMessage`. We then find the correct
 public key and ask Virgil to decrypt it. Once that's done, we can pass the key
 along with the rest of the props to the Stream's `MessageSimple` component.
 
+The `_isMounted` flag prevents updating the component after the message 
+has been decrypted. This can occur if you're scrolling quickly, or upon page load
+when there's lots of messages.
+
 # Where to go from here
 This tutorial is intended to get you up and running as fast as possible. Because
 of this, some critical functionality may be missing from your application. Here
