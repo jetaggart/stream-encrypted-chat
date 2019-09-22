@@ -201,7 +201,7 @@ Once we have created an sender identity with an auth token, we can connect to
 Stream and Virgil.
 
 ## Step 2. User connects to Stream
-Using the credentials from [Step 1.](#step-1-user-authenticats-with-backend), we
+Using the credentials from [Step 1.](#step-1-user-authenticates-with-backend), we
 can request Stream credentials from the backend. Using those we connect our
 frontend client to Stream:
 
