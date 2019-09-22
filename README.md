@@ -110,20 +110,20 @@ application provides three endpoints:
   ```javascript
   // backend/src/controllers/v1/stream-credentials.js
   exports.streamCredentials = async (req, res) => {
-      const data = req.body;
-      const apiKey = process.env.STREAM_API_KEY;
-      const apiSecret = process.env.STREAM_API_SECRET;
+    const data = req.body;
+    const apiKey = process.env.STREAM_API_KEY;
+    const apiSecret = process.env.STREAM_API_SECRET;
 
-      const client = new StreamChat(apiKey, apiSecret);
+    const client = new StreamChat(apiKey, apiSecret);
 
-      const user = Object.assign({}, data, {
-          id: `${req.user.identity}`,
-          role: 'admin',
-          image: `https://robohash.org/${req.user.identity}`,
-      });
-      const token = client.createToken(user.id);
-      await client.updateUsers([user]);
-      res.status(200).json({ user, token, apiKey });
+    const user = Object.assign({}, data, {
+      id: `${req.user.identity}`,
+      role: 'admin',
+      image: `https://robohash.org/${req.user.identity}`,
+    });
+    const token = client.createToken(user.id);
+    await client.updateUsers([user]);
+    res.status(200).json({ user, token, apiKey });
   }
   ```
   
@@ -153,17 +153,17 @@ application provides three endpoints:
   const virgilCrypto = new VirgilCrypto();
   
   const generator = new JwtGenerator({
-  	appId: process.env.VIRGIL_APP_ID,
-  	apiKeyId: process.env.VIRGIL_KEY_ID,
-  	apiKey: virgilCrypto.importPrivateKey(process.env.VIRGIL_PRIVATE_KEY),
-  	accessTokenSigner: new VirgilAccessTokenSigner(virgilCrypto)
+    appId: process.env.VIRGIL_APP_ID,
+    apiKeyId: process.env.VIRGIL_KEY_ID,
+    apiKey: virgilCrypto.importPrivateKey(process.env.VIRGIL_PRIVATE_KEY),
+    accessTokenSigner: new VirgilAccessTokenSigner(virgilCrypto)
   });
   
   
   exports.virgilCredentials = async (req, res) => {
-  	const virgilJwtToken = generator.generateToken(req.user.identity);
+    const virgilJwtToken = generator.generateToken(req.user.identity);
   
-  	res.json({ token: virgilJwtToken.toString() });
+    res.json({ token: virgilJwtToken.toString() });
   };
   ```
   

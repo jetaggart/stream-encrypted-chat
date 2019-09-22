@@ -3,5 +3,5 @@ import { requireAuthHeader } from "../controllers/v1/authenticate/authenticate.a
 import { streamCredentials } from "../controllers/v1/stream-credentials/stream-credentials.action";
 
 module.exports = api => {
-	api.route("/v1/stream-credentials").post(requireAuthHeader, wrapAsync(streamCredentials));
+  api.route("/v1/stream-credentials").post(requireAuthHeader, wrapAsync(streamCredentials));
 };
