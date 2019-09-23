@@ -1,13 +1,13 @@
 # Building HIPAA Compliant End-to-End Encrypted Chat with Stream React Chat and Virgil Security
 
-As healthcare technology advances, easy real-time communication is becoming
-increasingly important to any modern healthcare application. It's important to
-provide the technology experiences patients expect, while protecting their
+As healthcare technology advances, secure real-time communication is becoming
+increasingly crucial to any modern healthcare application. It's essential to
+provide the technology experiences patients expect while protecting their
 privacy and healthcare data. Chat messages often contain protected health
-information (PHI) so it's important that you consider end-to-end encryption when
+information (PHI), so you must consider end-to-end encryption when
 building chat into your application.
 
-In this tutorial we will walk through how to create a full, end-to-end encrypted
+In this tutorial, we will walk through how to create a full, end-to-end encrypted
 chat solution using [Stream Chat](https://getstream.io/chat/) combined with
 [Virgil Security](https://virgilsecurity.com/end-to-end-encrypted-chat). These
 two services allow developers to integrate chat that is HIPAA compliant by
@@ -17,18 +17,17 @@ Security's [eThree Kit](https://github.com/VirgilSecurity/virgil-e3kit-js) with
 components. All source code for this application is available on
 [GitHub](https://github.com/psylinse/stream-encrypted-chat).
 
-Both Stream Chat and Virgil make it easy to build a solution with great security
+Both Stream Chat and Virgil make it easy to build a solution with excellent security
 with all the features you expect.
 
 ## What is end-to-end encryption?
 
-End-to-end encryption means that messages sent between two people can only be
-read by them. To do this, the message is encrypted before it leaves a user's
+End-to-end encryption means that they can only read messages sent between two people. To do this, the message is encrypted before it leaves a user's
 device, and can only be decrypted by the intended recipient.
 
-Virgil Security is a vendor that allows us to create end-to-end encryption via
+Virgil Security is a vendor that will enable us to create end-to-end encryption via
 public/private key technology. Virgil provides a platform and JavaScript SDK
-that allows us to securely create, store, and provide robust end-to-end
+that will enable us to create, store, and offer robust end-to-end secure
 encryption.
 
 During this tutorial, we will create a Stream Chat app that uses Virgil's
@@ -39,7 +38,7 @@ messages, all they would see is encrypted text, called ciphertext.
 
 # Let's build a HIPAA compliant chat application using React!
 
-To build this application we're going to rely on three libraries,
+To build this application, we're going to rely on three libraries,
 [Stream React Chat](https://www.npmjs.com/package/stream-chat-react),
 [Virgil SDK](https://www.npmjs.com/package/virgil-sdk) and
 [Virgil Crypto](https://www.npmjs.com/package/virgil-crypto). Our final product
@@ -65,7 +64,7 @@ To accomplish this, the app performs the following steps:
    message is relayed through Stream Chat to the receiver. Stream receives
    ciphertext, meaning they can never see the original message.
 7. The receiving user decrypts the sent message using Virgil. When the message
-   is received, app decrypts the message using using the Virgil and this is
+   is received, app decrypts the message using the Virgil and this is
    passed along to Stream's React components. Virgil verifies the message is
    authentic by using the sender's public key.
 
@@ -106,13 +105,13 @@ Except for `node` and `yarn`, all of these dependencies are declared in
 `backend/package.json` and `frontend/package.json`. 
 
 ## Step 0. Setup the Backend
-In order for our React frontend to interact with Stream and Virgil, the
+For our React frontend to interact with Stream and Virgil, the
 application provides three endpoints:
 
 * `POST /v1/authenticate`: This endpoint generates an auth token that allows the
   React frontend to communicate with `/v1/stream-credentials` and
-  `/v1/virgil-credentials`. To keep things simple, this endpoint simply allows
-  the client to be any user. The frontend simply tells the backend who it wants
+  `/v1/virgil-credentials`. To keep things simple, this endpoint allows
+  the client to be any user. The frontend tells the backend who it wants
   to authenticate as. In your application, this should be replaces with your
   API's authentication endpoint.
 * `POST /v1/stream-credentials`: This returns the data required for the React
@@ -285,7 +284,7 @@ we ask for both public keys at the same time.
 
 ## Step 6. Sender encrypts message and sends it via Stream
 We have everything we need to send a secure, end-to-end encrypted message via
-Stream. Time to chat! First we need to show the user the chat room:
+Stream. Time to chat! First, we need to show the user the chat room:
 
 ```javascript
 // frontend/src/App.js
