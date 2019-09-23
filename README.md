@@ -112,7 +112,7 @@ application provides three endpoints:
   React frontend to communicate with `/v1/stream-credentials` and
   `/v1/virgil-credentials`. To keep things simple, this endpoint allows
   the client to be any user. The frontend tells the backend who it wants
-  to authenticate as. In your application, this should be replaces with your
+  to authenticate as. In your application, this should be replaced with your
   API's authentication endpoint.
 * `POST /v1/stream-credentials`: This returns the data required for the React
   app to establish a session with Stream. In order return this info we need to
