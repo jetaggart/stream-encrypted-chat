@@ -442,7 +442,3 @@ are some tips for what to do next with your app.
   app via CSS. You can look at hooking into Stream React Chat's
   [MessageInput](https://getstream.github.io/stream-chat-react/#messageinput) or
   use as a jumping off point to build your own chat widget.
-
-# ? Contact Stream more upselling ?
-
-If you want to get started with Stream and Virgil, contact us here!
